@@ -8,11 +8,5 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "sqlite3": "^5.1.7"
-    },
-    "peerDependencies": {
-        "sqlite3": "^5.1.7"
-    }
+    "license": "ISC"
 }
