@@ -1,3 +1,5 @@
+const QueriesSqlite3 = require('./queries/sqlite3/QueriesSqlite3');
+
 class box {
     constructor(database, username, password) {
         this.database = database.database;
@@ -30,7 +32,9 @@ class box {
         } else {
             if (this.dialect == 'sqlite3') {
                 // todo: put insert sqlite3 logic here
-                return 'valid data - in sqlite3';
+                const db = new QueriesSqlite3(); 
+                return db.insertInto(this.tablename, insert_data);
+
             } else if (this.dialect == 'mysql') {
                 // todo: put mysql insert logic here
                 return 'valid data - in mysql'
