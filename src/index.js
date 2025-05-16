@@ -15,12 +15,37 @@ class box {
         this.tablename = tablename; //string nombre de la tabla
         this.atribute = atribute; // json
         this.modelOptions = modelOptions; //json too
-
         // return this.atribute.name.hi; // todo: list all the row names and types (atributes) y destinarlos a las diferentes tipos de datos string int boolean etc
-        return this.atribute;
+        return this;
     }
 
-    show() { // temporal solo para debug
+    getIntAtributes() {
+        for (const [key, value] of Object.entries(this.atribute)) {
+            if (value.type === 'INTEGER') {
+                // Check if allowNull is TRUE
+                console.log(key, value); // Print the property name and its definition
+            }
+        }
+    }
+    getStringAtributes() {
+        for (const [key, value] of Object.entries(this.atribute)) {
+            if (value.type === 'STRING') {
+                // Check if allowNull is TRUE
+                console.log(key, value); // Print the property name and its definition
+            }
+        }
+    }
+    getBooleanAtributes() {
+        for (const [key, value] of Object.entries(this.atribute)) {
+            if (value.type === 'BOOLEAN') {
+                // Check if allowNull is TRUE
+                console.log(key, value); // Print the property name and its definition
+            }
+        }
+    }
+
+    show() {
+        // temporal solo para debug
         // console.log("Database: ",this.database);
         // console.log("Dialect: ",this.dialect);
         // console.log("storage location: ",this.storage);
