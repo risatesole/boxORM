@@ -1,3 +1,5 @@
+// creo que esto se puede volver inmantenible 
+// todo: refactorizar
 const QueriesSqlite3 = require('./queries/sqlite3/QueriesSqlite3');
 
 class box {
@@ -20,31 +22,35 @@ class box {
         // return this.atribute.name.hi; // todo: list all the row names and types (atributes) y destinarlos a las diferentes tipos de datos string int boolean etc
         return this;
     }
-
-    insert(insert_data) {
+    async insert(insert_data) {
         this.atribute;
-        const resoult = this.validateDataAgainstSchema(
+        const result = this.validateDataAgainstSchema(
             insert_data,
             this.atribute
         );
-        if (resoult.isValid == false) {
+        if (result.isValid == false) {
             return 'invalid data';
         } else {
             if (this.dialect == 'sqlite3') {
-                // todo: put insert sqlite3 logic here
-                const db = new QueriesSqlite3(); 
-                return db.insertInto(this.tablename, insert_data);
-
+                const db = new QueriesSqlite3(this.storage);
+                try {
+                    // holly shit this was hard:
+                    await db.createTable(this.tablename, this.atribute);
+                    await db.insertInto(this.tablename, insert_data);
+                    return true;
+                } catch (error) {
+                    console.error('Database operation failed:', error);
+                    return false;
+                } finally {
+                    db.close();
+                }
             } else if (this.dialect == 'mysql') {
-                // todo: put mysql insert logic here
-                return 'valid data - in mysql'
+                return 'valid data - in mysql';
             } else if (this.dialect == 'mariadb') {
-                // todo: put mariadb insert logic here
-                return 'valid data - in mariadb'
-            }else {
+                return 'valid data - in mariadb';
+            } else {
                 return 'not dbms recognised';
             }
-            return 'just valid data no dbms recognised';
         }
     }
 
@@ -73,7 +79,8 @@ class box {
         }
     }
 
-    validateDataAgainstSchema(data, schema) { //got help from the llm for this feel just to do this feel ashamed
+    validateDataAgainstSchema(data, schema) {
+        //got help from the llm for this feel just to do this feel ashamed
         // Check for missing required fields
         for (const [field, config] of Object.entries(schema)) {
             if (!config.allowNull && !(field in data)) {
