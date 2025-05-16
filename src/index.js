@@ -1,8 +1,10 @@
-// creo que esto se puede volver inmantenible 
+// creo que esto se puede volver inmantenible
 // todo: refactorizar
 const QueriesSqlite3 = require('./queries/sqlite3/QueriesSqlite3');
 
 class box {
+static listOfSupportedDialects = ['sqlite3', 'mysql'];
+
     constructor(database, username, password) {
         this.database = database.database;
         this.username = database.username;
@@ -12,6 +14,14 @@ class box {
         this.storage = database.storage;
         this.username = username;
         this.password = password;
+
+        // console.log("checking dialects");
+        if (!box.listOfSupportedDialects.includes(this.dialect)) {
+            console.log(`!!! error: ${this.dialect} is not a supported dialect.`);
+            return;
+        } else {
+            console.log(`valid dialect`);
+        }
     }
 
     define(tablename, atribute, modelOptions) {
