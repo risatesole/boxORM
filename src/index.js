@@ -44,6 +44,68 @@ class box {
         }
     }
 
+    validateDataAgainstSchema(data, schema) { //got help from the llm for this feel just to do this feel ashamed
+        // Check for missing required fields
+        for (const [field, config] of Object.entries(schema)) {
+            if (!config.allowNull && !(field in data)) {
+                return {
+                    isValid: false,
+                    error: `Missing required field: ${field}`,
+                };
+            }
+        }
+
+        // Check for extra fields not in schema
+        for (const field in data) {
+            if (!(field in schema)) {
+                return { isValid: false, error: `Unexpected field: ${field}` };
+            }
+        }
+
+        // Check data types
+        for (const [field, value] of Object.entries(data)) {
+            const config = schema[field];
+            if (value === null || value === undefined) {
+                if (!config.allowNull) {
+                    return {
+                        isValid: false,
+                        error: `Field ${field} cannot be null`,
+                    };
+                }
+                continue;
+            }
+
+            let isValidType;
+            switch (config.type) {
+                case 'STRING':
+                    isValidType = typeof value === 'string';
+                    break;
+                case 'INTEGER':
+                    isValidType = Number.isInteger(value);
+                    break;
+                case 'BOOLEAN':
+                    isValidType = typeof value === 'boolean';
+                    break;
+                default:
+                    return {
+                        isValid: false,
+                        error: `Unknown type ${config.type} for field ${field}`,
+                    };
+            }
+
+            if (!isValidType) {
+                return {
+                    isValid: false,
+                    error: `Field ${field} should be ${
+                        config.type
+                    }, got ${typeof value}`,
+                };
+            }
+        }
+
+        return { isValid: true };
+    }
+
     show() {
         // temporal solo para debug
         // console.log("Database: ",this.database);
