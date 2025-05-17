@@ -207,11 +207,7 @@ class box {
      * @method show - debug function to be called to test some aspects of the code
      */
     show() {
-        // temporal solo para debug
-        // console.log("Database: ",this.database);
-        // console.log("Dialect: ",this.dialect);
-        // console.log("storage location: ",this.storage);
-        // console.log("model option: the id: ",this.modelOptions.id);
+        console.log("Hello!");
     }
 }
 
@@ -234,8 +230,6 @@ class dbmsTemplate {
      */
     constructor(passme) {
         this.passme = passme;
-        // console.log('Hello from template');
-        // console.log(this.passme);
         this.connect();
     }
     /**
@@ -326,10 +320,6 @@ class dbmsTemplate {
             console.log('no tablename defined');
         }
         this.atribute = atribute;
-        // console.log("definint dbms table");
-        // console.log("table name: ",tablename);
-        // console.log("atributes: ",atribute);
-        // console.log("modelOptions: ",modelOptions);
         this.createTable(tablename, atribute);
         this.tableName = tablename;
         return this;
@@ -344,9 +334,6 @@ class dbmsTemplate {
         // const columns = Object.keys(insertData).map(escapeIdentifier).join(', ');
         console.log(Object.keys(insertData));
         console.log(this.columns);
-        // console.log(insertData);
-
-        // Process values safely
 
         const values = [];
         for (const val of Object.values(insertData)) {

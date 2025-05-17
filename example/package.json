@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "box": "file:../box",
+    "sqlite3": "^5.1.7"
+  }
+}
