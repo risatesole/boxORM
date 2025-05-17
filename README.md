@@ -1,6 +1,8 @@
 # Box ORM
 # Box ORM - A Simple JavaScript ORM - box name is temporary will change it in the future
 
+Disclaimer in development
+
 Box is a lightweight, intuitive Object-Relational Mapping (ORM) library for JavaScript, designed to simplify database interactions with a clean, expressive syntax.
 
 ## Features
