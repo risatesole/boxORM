@@ -326,7 +326,6 @@ class dbmsTemplate {
             console.log('no tablename defined');
         }
         this.atribute = atribute;
-        console.log('fuck im here: ', this.atribute);
         // console.log("definint dbms table");
         // console.log("table name: ",tablename);
         // console.log("atributes: ",atribute);
