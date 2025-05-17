@@ -25,7 +25,7 @@ class box {
 
     /**
      * constructor stablishes the connection to this class
-     * @constructor constructor for orm (box)
+     * @constructor boxConstructor - constructor for orm (box)
      * @param {{port:integer,dialect:string,storage:string,dialectOptions:json}} database
      * @param {String} username
      * @param {string} password
@@ -48,7 +48,7 @@ class box {
      * attempting to connect. It does that by setting the appropriate database logic handler
      * based on the chosen dialect. Currently only supports 'template' dialect - other dialects
      * will log an error.
-     * @method connect
+     * @method connect - connect to dbms.
      * @returns {void}
      * @throws Will log an error to console if:
      *   - The dialect is not supported (in listOfSupportedDialects)
@@ -60,7 +60,7 @@ class box {
             console.log(`error: ${this.dialect} is not a supported dialect.`);
             return;
         } else {
-            console.log(`valid dialect`);
+            // console.log(`valid dialect`);
         }
 
         // set database based in user dialect
@@ -339,7 +339,7 @@ class dbmsTemplate {
     /**
      * @method insert - insert data into database
      * @param {*} insertData 
-     * @returns 
+     * @returns {void}
      */
     async insert(insertData) {
         // const columns = Object.keys(insertData).map(escapeIdentifier).join(', ');
