@@ -1,7 +1,7 @@
 // const QueriesSqlite3 = require('./queries/sqlite3/QueriesSqlite3');
 
 /**
- * Main ORM abstraction class.
+ * Main ORM class.
  * Hello user Henry here hope you are doing well
  * @warning At the moment im creating this orm for now treat it like everything is going to explode
  * do not trust blind folded in this code ;)
@@ -26,7 +26,7 @@ class box {
     /**
      * constructor stablishes the connection to this class
      * @constructor boxConstructor - constructor for orm (box)
-     * @param {{port:integer,dialect:string,storage:string,dialectOptions:json}} database
+     * @param {json} database
      * @param {String} username
      * @param {string} password
      */
@@ -42,6 +42,7 @@ class box {
         this.listOfSupportedDialects = ['sqlite3', 'mysql', 'template'];
         this.connect();
     }
+
     /**
      * This method Establishes a connection to the database based on the configured dialect.
      * Checks if the dialect is supported then checks if the credentials are not emty before
@@ -57,8 +58,10 @@ class box {
     connect() {
         // check if dialect is unsuppourted:
         if (!this.listOfSupportedDialects.includes(this.dialect)) {
-            console.log(`error: ${this.dialect} is not a supported dialect.`);
-            return;
+// console.log(`error: ${this.dialect} is not a supported dialect.`);
+            throw new Error(
+                `error: ${this.dialect} is not a supported dialect.`
+            );
         } else {
             // console.log(`valid dialect`);
         }
@@ -74,7 +77,7 @@ class box {
 
     /**
      * @param {string} tablename
-     * @param {{atributeName:{type:string,allowNull:boolean}}} atribute
+     * @param {{json}} atribute
      * @param {json} modelOptions  - not implemented jet
      * @returns {this} Returns the instance for method chaining.
      */
@@ -207,7 +210,7 @@ class box {
      * @method show - debug function to be called to test some aspects of the code
      */
     show() {
-        console.log("Hello!");
+        console.log('Hello!');
     }
 }
 
@@ -238,26 +241,18 @@ class dbmsTemplate {
      * @returns {void}
      */
     connect() {
-        console.log('executing connection logic');
-        console.log('data about connection: ');
-        console.log({
-            storage: this.passme.storage,
-            port: this.passme.password,
-            dialect: this.passme.dialect,
-            dialectOptions: this.passme.dialectOptions,
-        });
-        this.line();
-    }
+        console.log('▪ executing connection logic.');
+// console.log('data about connection: ');
+// console.log({
+//     storage: this.passme.storage,
+//     port: this.passme.password,
+//     dialect: this.passme.dialect,
+//     dialectOptions: this.passme.dialectOptions,
+// });
+        }
+
     /**
-     * @method line
-     * @description just prints a line for easy to read in the terminal from where is called
-     * @returns {void}
-     */
-    line() {
-        console.log('-------------------------------------------------------');
-    }
-    /**
-     * 
+     * creates table
      * @param {string} tablename  - name of the table to create
      * @param {json} attributes - the atributes for create the database
      * @returns {void}
