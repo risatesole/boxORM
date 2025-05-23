@@ -20,64 +20,39 @@ Box is a lightweight, intuitive Object-Relational Mapping (ORM) library for Java
 # for the moment just install this repository this is not even in beta and some features are needed
 ```
 
-## Basic Usage
-
-### Define a Model
-
+## Example usage
 ```js
-import box from 'box';
+const Box = require('Box');
 
-// connection
-const Box = new box({
+const box = new Box({
     storage: './db.sqlite3',
     dialect: 'template',
     port: 88
-},"myUsername","strongPassword");
+}, "myUsername", "strongPassword");
 
-// model
-const User = Box.define(
-    "user",
-    {
-        name: {
-            type: 'STRING',
-            allowNull: false
-        },
-        email: {
-            type: 'STRING',
-            allowNull: false
-        },
+//models
+const User = box.define("user", {
+    name: { type: 'STRING', allowNull: true },
+    age: { type: 'INTEGER', allowNull: false }
+});
 
-        age: {
-            type: 'INTEGER',
-            allowNull: false
-        },
-        isalive{
-          type: 'INTEGER',
-          allowNull: false
-        }
-    },
-    'anymodeloption'
-);
+const Product = box.define("product", {
+    name: { type: 'STRING', allowNull: false },
+    price: { type: 'INTEGER', allowNull: false }
+});
 
+// Inserts
 User.insert({
-    name: "allis",
-    age: 25,
-    eyeColor: "red",
-    IsDominican: true
+    name: "John",
+    age: 30
+});
+
+Product.insert({
+    name: "Laptop",
+    price: 999
 });
 ```
 
-### CRUD Operations
-
-```js
-// Create
-User.insert({
-  name: 'John Doe',
-  email: 'john@example.com',
-  age: 30,
-  isalive: true
-});
-```
 
 ### Query Building
 
