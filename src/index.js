@@ -5,26 +5,12 @@
  * Hello user Henry here hope you are doing well
  * @warning At the moment im creating this orm for now treat it like everything is going to explode
  * do not trust blind folded in this code ;)
- * @todo Refactor this to be more maintainable
  * @class box - temporary name to this orm class
- * @property {Object} database - Database name or connection logic
- * @property {string} username - Database username
- * @property {string} password - Database password
- * @property {number} port - Connection port
- * @property {Object} dialectOptions - Additional dialect-specific options
- * @property {string} dialect - Database dialect (sqlite3, mysql, template)
- * @property {string} storage - Storage path (for file-based databases)
- * @property {Object} databaseLogic - The active database handler instance
- *
  */
 class box {
-    /**
-     *
-     */
     // static listOfSupportedDialects = ['sqlite3', 'mysql', 'template'];
 
     /**
-     * constructor stablishes the connection to this class
      * @constructor boxConstructor - constructor for orm (box)
      * @param {json} database
      * @param {String} username
@@ -58,7 +44,7 @@ class box {
     connect() {
         // check if dialect is unsuppourted:
         if (!this.listOfSupportedDialects.includes(this.dialect)) {
-// console.log(`error: ${this.dialect} is not a supported dialect.`);
+            // console.log(`error: ${this.dialect} is not a supported dialect.`);
             throw new Error(
                 `error: ${this.dialect} is not a supported dialect.`
             );
@@ -66,9 +52,7 @@ class box {
             // console.log(`valid dialect`);
         }
 
-        // set database based in user dialect
         if (this.dialect == 'template') {
-            // console.log('connection to template');
             this.databaseLogic = new dbmsTemplate(this); // calling class dbmsTemplate as if is a dbms and putting in this.databaseLogic
         } else {
             console.log('this is an error');
@@ -242,14 +226,14 @@ class dbmsTemplate {
      */
     connect() {
         console.log('▪ executing connection logic.');
-// console.log('data about connection: ');
-// console.log({
-//     storage: this.passme.storage,
-//     port: this.passme.password,
-//     dialect: this.passme.dialect,
-//     dialectOptions: this.passme.dialectOptions,
-// });
-        }
+        // console.log('data about connection: ');
+        // console.log({
+        //     storage: this.passme.storage,
+        //     port: this.passme.password,
+        //     dialect: this.passme.dialect,
+        //     dialectOptions: this.passme.dialectOptions,
+        // });
+    }
 
     /**
      * creates table
@@ -292,7 +276,7 @@ class dbmsTemplate {
         const query = `CREATE TABLE IF NOT EXISTS ${tablename} (${myColumnDesign});`;
 
         try {
-            await this.queryExecuter(query);
+            await this.queryExecuter(query); // execute the query
             return query;
         } catch (error) {
             console.error('Error creating table:', error.message);
@@ -303,10 +287,10 @@ class dbmsTemplate {
     /**
      * @todo model options
      * @method define
-     * @description defines the way a table should be based in the table model 
-     * @param {string} tablename 
-     * @param {json} atribute 
-     * @param {json} modelOptions - not implemented jet but must put a placeholder for now 
+     * @description defines the way a table should be based in the table model
+     * @param {string} tablename
+     * @param {json} atribute
+     * @param {json} modelOptions - not implemented jet but must put a placeholder for now
      * @returns {void}
      * @see {@link box#connect}
      */
@@ -314,21 +298,26 @@ class dbmsTemplate {
         if (tablename == null) {
             console.log('no tablename defined');
         }
+
+        this.tableColumns = Object.keys(atribute);
         this.atribute = atribute;
-        this.createTable(tablename, atribute);
         this.tableName = tablename;
+        this.createTable(tablename, atribute);
         return this;
     }
 
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+
     /**
      * @method insert - insert data into database
-     * @param {*} insertData 
+     * @param {*} insertData
      * @returns {void}
      */
     async insert(insertData) {
         // const columns = Object.keys(insertData).map(escapeIdentifier).join(', ');
-        console.log(Object.keys(insertData));
-        console.log(this.columns);
+        // console.log(Object.keys(insertData));
+        // console.log(this.columns);
 
         const values = [];
         for (const val of Object.values(insertData)) {
@@ -345,7 +334,7 @@ class dbmsTemplate {
         const valuesString = values.join(', ');
 
         // Build query with semicolon
-        const query = `INSERT INTO ${this.tableName} (${this.columns}) VALUES (${valuesString});`;
+        const query = `INSERT INTO ${this.tableName} (${this.tableColumns}) VALUES (${valuesString});`;
 
         try {
             await this.queryExecuter(query);
@@ -362,9 +351,9 @@ class dbmsTemplate {
      * @returns {Promise<void>} A resolved Promise with no return value.
      */
     async queryExecuter(query) {
-        console.log('executing query: ');
+        console.log("----------------")
+        console.log('▪ executing query: ');
         console.log(query);
-        this.line();
         // Simulate async operation
         return Promise.resolve();
     }
