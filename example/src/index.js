@@ -1,31 +1,30 @@
-class Person {
-  constructor(name, age) {
-    this.name = name;
-    this.age = age;
-  }
+const Box = require('Box');
 
-  getAlcohol() {
-    if (this.age >= 21) {
-      return `${this.name} (age ${this.age}) can buy alcohol.`;
-    } else {
-      return `${this.name} (age ${this.age}) is too young to buy alcohol.`;
-    }
-  }
-}
+const box = new Box({
+    storage: './db.sqlite3',
+    dialect: 'template',
+    port: 88
+}, "myUsername", "strongPassword");
 
-// Create a factory function
-function createPerson() {
-  return function(name, age) {
-    return new Person(name, age);
-  };
-}
+// Define models
+const User = box.define("user", {
+    name: { type: 'STRING', allowNull: true },
+    age: { type: 'INTEGER', allowNull: false }
+});
 
-// Create the constructor only once
-const personFactory = createPerson();
+const Product = box.define("product", {
+    name: { type: 'STRING', allowNull: false },
+    price: { type: 'INTEGER', allowNull: false }
+});
 
-// Create multiple people
-const Alice = personFactory('alice', 24);
-const Bob = personFactory('bob', 18);
+// Insert records - using the MODEL's insert method, not the ORM's
+User.insert({
+    name: "John",
+    age: 30
+});
 
-console.log(Alice.getAlcohol()); // "alice (age 24) can buy alcohol."
-console.log(Bob.getAlcohol());   // "bob (age 18) is too young to buy alcohol."
+Product.insert({
+    name: "Laptop",
+    price: 999
+});
+
