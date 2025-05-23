@@ -66,6 +66,7 @@ class box {
      * @returns {this} Returns the instance for method chaining.
      */
     define(tablename, atribute, modelOptions) {
+        this.tableName= tablename;
         this.databaseLogic.define(tablename, atribute, modelOptions);
         return this;
     }
@@ -84,6 +85,8 @@ class box {
      * @param {json} insert_data - data to insert into the table
      */
     async insert(insert_data) {
+        // todo: fix why still the error of table name is the last created model
+        console.log(this.tableName);
         this.databaseLogic.insert(insert_data);
     }
 
