@@ -1,5 +1,3 @@
-// const QueriesSqlite3 = require('./queries/sqlite3/QueriesSqlite3');
-
 /**
  * Main ORM class.
  * Hello user Henry here hope you are doing well
@@ -7,7 +5,7 @@
  * do not trust blind folded in this code ;)
  * @class box - temporary name to this orm class
  */
-class box {
+class Box {
     // static listOfSupportedDialects = ['sqlite3', 'mysql', 'template'];
 
     /**
@@ -26,6 +24,7 @@ class box {
         this.username = username;
         this.password = password;
         this.listOfSupportedDialects = ['sqlite3', 'mysql', 'template'];
+        this.models = {};
         this.connect();
     }
 
@@ -66,9 +65,11 @@ class box {
      * @returns {this} Returns the instance for method chaining.
      */
     define(tablename, atribute, modelOptions) {
+        const model = new Model(this, tablename, atribute, modelOptions);
+        this.models[tablename] = model;
         this.tableName= tablename;
         this.databaseLogic.define(tablename, atribute, modelOptions);
-        return this;
+        return model;
     }
 
     /**
@@ -193,16 +194,60 @@ class box {
 
         return { isValid: true };
     }
-    /**
-     * @method show - debug function to be called to test some aspects of the code
-     */
-    show() {
-        console.log('Hello!');
-    }
 }
 
 /**
- * this class can be used to copy and paste. this class serves as templete for new dbms that should implement those functions
+ * Model class representing a database table
+ * @class Model
+ */
+class Model {
+    /**
+     * Creates a new Model instance
+     * @constructor
+     * @param {box} orm - The ORM instance
+     * @param {string} tablename - Table name
+     * @param {Object} attributes - Table attributes
+     * @param {Object} [modelOptions] - Model options
+     */
+    constructor(orm, tablename, attributes, modelOptions) {
+        this.orm = orm;
+        this.tablename = tablename;
+        this.attributes = attributes;
+        this.modelOptions = modelOptions || {};
+        this.tableColumns = Object.keys(attributes);
+        this.initialize();
+    }
+
+    /**
+     * Initializes the model (creates table in database)
+     * @method initialize
+     * @private
+     * @returns {void}
+     */
+    initialize() {
+        this.orm.databaseLogic.createTable(this.tablename, this.attributes);
+    }
+
+    /**
+     * Inserts data into the model's table
+     * @method insert
+     * @param {Object} data - Data to insert
+     * @returns {Promise<void>}
+     * @throws {Error} If validation fails
+     */
+    async insert(data) {
+        const validation = this.orm.validateDataAgainstSchema(data, this.attributes);
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+        return this.orm.databaseLogic.insert(this.tablename, data, this.tableColumns);
+    }
+
+    // ... (other model methods can be added here)
+}
+
+/**
+ * Database handler template class
  * @class dbmsTemplate
  * @property {json} passme - this function is called by function  {@link box}
  */
@@ -297,55 +342,28 @@ class dbmsTemplate {
      * @returns {void}
      * @see {@link box#connect}
      */
-    define(tablename, atribute, modelOptions) {
-        if (tablename == null) {
-            console.log('no tablename defined');
-        }
-
-        this.tableColumns = Object.keys(atribute);
-        this.atribute = atribute;
-        this.tableName = tablename;
-        this.createTable(tablename, atribute);
+    define(tablename, attributes, modelOptions) {
+        if (!tablename) throw new Error('Table name is required');
+        this.createTable(tablename, attributes);
         return this;
     }
-
-    // -------------------------------------------------------------------------
-    // -------------------------------------------------------------------------
 
     /**
      * @method insert - insert data into database
      * @param {*} insertData
      * @returns {void}
      */
-    async insert(insertData) {
-        // const columns = Object.keys(insertData).map(escapeIdentifier).join(', ');
-        // console.log(Object.keys(insertData));
-        // console.log(this.columns);
+    async insert(tablename, insertData, tableColumns) {
+        const values = Object.values(insertData).map(val => {
+            if (val === null) return 'NULL';
+            if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
+            if (typeof val === 'boolean') return val ? 1 : 0;
+            return val;
+        });
 
-        const values = [];
-        for (const val of Object.values(insertData)) {
-            if (val === null) {
-                values.push('NULL');
-            } else if (typeof val === 'string') {
-                values.push(`'${val.replace(/'/g, "''")}'`);
-            } else if (typeof val === 'boolean') {
-                values.push(val ? 1 : 0);
-            } else {
-                values.push(val);
-            }
-        }
-        const valuesString = values.join(', ');
-
-        // Build query with semicolon
-        const query = `INSERT INTO ${this.tableName} (${this.tableColumns}) VALUES (${valuesString});`;
-
-        try {
-            await this.queryExecuter(query);
-            return query;
-        } catch (error) {
-            console.error('Error inserting data:', error.message);
-            throw error;
-        }
+        const query = `INSERT INTO ${tablename} (${tableColumns.join(', ')}) VALUES (${values.join(', ')});`;
+        await this.queryExecuter(query);
+        return query;
     }
 
     /**
@@ -354,26 +372,11 @@ class dbmsTemplate {
      * @returns {Promise<void>} A resolved Promise with no return value.
      */
     async queryExecuter(query) {
-        console.log("----------------")
-        console.log('▪ executing query: ');
+        console.log('----------------');
+        console.log('▪ executing query:');
         console.log(query);
-        // Simulate async operation
         return Promise.resolve();
-    }
-
-    /**
-     * @todo make it just return just the name of the columns
-     * @returns {json} returns a json with the columns and atributes of the table
-     */
-    getColumns() {
-        console.log('atributes: ', this.atribute);
-        return this.atribute;
     }
 }
 
-/**
- * The main orm export
- * @module box-orm
- * @exports {Box} - box orm
- */
-module.exports = box;
+module.exports = Box;
