@@ -6,7 +6,7 @@ const box = new Box({
     port: 88
 }, "myUsername", "strongPassword");
 
-// Define models
+//models
 const User = box.define("user", {
     name: { type: 'STRING', allowNull: true },
     age: { type: 'INTEGER', allowNull: false }
@@ -17,7 +17,7 @@ const Product = box.define("product", {
     price: { type: 'INTEGER', allowNull: false }
 });
 
-// Insert records - using the MODEL's insert method, not the ORM's
+// Inserts
 User.insert({
     name: "John",
     age: 30
